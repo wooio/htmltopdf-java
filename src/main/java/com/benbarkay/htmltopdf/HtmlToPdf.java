@@ -188,6 +188,28 @@ public class HtmlToPdf {
     }
 
     /**
+     * Adds a runnable to run if the conversion was successful.
+     */
+    public HtmlToPdf success(Runnable successRunnable) {
+        return finished(success -> {
+            if (success) {
+                successRunnable.run();
+            }
+        });
+    }
+
+    /**
+     * Adds a runnable to run if the conversion failed.
+     */
+    public HtmlToPdf failure(Runnable failureRunnable) {
+        return finished(success -> {
+            if (!success) {
+                failureRunnable.run();
+            }
+        });
+    }
+
+    /**
      * Adds an object to be converted.
      */
     public HtmlToPdf object(HtmlToPdfObject object) {
