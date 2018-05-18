@@ -1,5 +1,5 @@
 # htmltopdf-java
-This project is based on wkhtmltopdf and uses JNA to access the native C API.
+This project is based on [wkhtmltopdf](https://github.com/wkhtmltopdf/wkhtmltopdf) and uses JNA to access the native C API.
 
 ## Examples
 
