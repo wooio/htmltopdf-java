@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class HtmlToPdf {
 
@@ -219,28 +221,41 @@ public class HtmlToPdf {
 
     /**
      * Performs the conversion, saving the result PDF to the specified path.
+     * @return {@code true} if the conversion process completed successfully,
+     *         or {@code false} otherwise.
      */
-    public void convert(String path) {
+    public boolean convert(String path) {
+        if (objects.size() < 1) {
+            return false;
+        }
         Map<String,String> settings = new HashMap<>(this.settings);
         settings.put("out", path);
-        withConverter(settings, wkHtmlToPdf::wkhtmltopdf_convert);
+        return withConverter(settings, wkHtmlToPdf::wkhtmltopdf_convert)
+                == 1;
     }
 
     /**
      * Performs the conversion, returning an {@code InputStream} with the
      * bytes of the resulting PDF.
+     * @throws HtmlToPdfException if conversion failed
      */
     public InputStream convert() {
         Map<String,String> settings = new HashMap<>(this.settings);
         settings.remove("out");
         return withConverter(settings, (c) -> {
+            List<String> log = new ArrayList<>();
+            warning(w -> log.add("Warning: " + w));
+            error(e -> log.add("Error: " + e));
             PointerByReference out = new PointerByReference();
-            wkHtmlToPdf.wkhtmltopdf_convert(c);
-            long size = wkHtmlToPdf.wkhtmltopdf_get_output(c, out);
-
-            byte[] pdfBytes = new byte[(int)size];
-            out.getValue().read(0, pdfBytes, 0, pdfBytes.length);
-            return new ByteArrayInputStream(pdfBytes);
+            if (wkHtmlToPdf.wkhtmltopdf_convert(c) == 1) {
+                long size = wkHtmlToPdf.wkhtmltopdf_get_output(c, out);
+                byte[] pdfBytes = new byte[(int) size];
+                out.getValue().read(0, pdfBytes, 0, pdfBytes.length);
+                return new ByteArrayInputStream(pdfBytes);
+            } else {
+                throw new HtmlToPdfException("Conversion returned with failure. Log:\n"
+                    + log.stream().collect(Collectors.joining("\n")));
+            }
         });
     }
 

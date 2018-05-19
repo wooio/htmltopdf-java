@@ -12,6 +12,9 @@ public class HtmlToPdfObject {
      * @return  The created {@code HtmlToPdfObject} instance.
      */
     public static HtmlToPdfObject forHtml(String html) {
+        if (html == null || html.isEmpty() || html.startsWith("\0")) {
+            throw new IllegalArgumentException("No content specified for object.");
+        }
         return new HtmlToPdfObject(html);
     }
 
