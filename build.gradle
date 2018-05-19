@@ -1,27 +1,10 @@
-group 'com.benbarkay'
+group 'com.benbarkay.htmltopdf'
 version '0.0.1'
 
 apply plugin: 'java'
 apply plugin: 'maven'
 
 sourceCompatibility = 1.8
-
-task writeNewPom {
-    doLast {
-        pom {
-            project {
-                inceptionYear '2018'
-                licenses {
-                    license {
-                        name 'MIT License'
-                        url 'https://opensource.org/licenses/MIT'
-                        distribution 'repo'
-                    }
-                }
-            }
-        }.writeTo("$buildDir/newpom.xml")
-    }
-}
 
 repositories {
     mavenCentral()
