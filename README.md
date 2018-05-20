@@ -2,7 +2,7 @@
 This project is based on [wkhtmltopdf](https://github.com/wkhtmltopdf/wkhtmltopdf) and uses JNA to access the native C API.
 
 Maven coordinates:
-`com.benbarkay.htmltopdf:htmltopdf:0.0.1`
+`com.benbarkay.htmltopdf:htmltopdf:0.1.0`
 
 ## Examples
 

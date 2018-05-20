@@ -1,11 +1,18 @@
 group 'com.benbarkay.htmltopdf'
-version '0.0.1'
+version '0.1.0'
 
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'signing'
 
 sourceCompatibility = 1.8
+
+def ossrhUsername = System.getenv("OSSRH_USERNAME") ?: project.getProperty("ossrhUsername")
+def ossrhPassword = System.getenv("OSSRH_PASSWORD") ?: project.getProperty("ossrhPassword")
+
+ext."signing.keyId" = System.getenv("SIGNING_KEYID") ?: project.getProperty("signing.keyId")
+ext."signing.password" = System.getenv("SIGNING_PASSWORD") ?: project.getProperty("signing.password")
+ext."signing.secretKeyRingFile" = project.hasProperty("signing.secretKeyRingFile") ? project.getProperty("signing.secretKeyRingFile") : file("secring.gpg").absolutePath
 
 repositories {
     mavenCentral()
