@@ -1,10 +1,16 @@
-# htmltopdf-java
-This project is based on [wkhtmltopdf](https://github.com/wkhtmltopdf/wkhtmltopdf) and uses JNA to access the native C API.
+![Build status](https://travis-ci.org/benbarkay/htmltopdf-java.svg?branch=master)
 
-Maven coordinates:
+# Overview
+This project is based on [wkhtmltopdf](https://github.com/wkhtmltopdf/wkhtmltopdf), which converts HTML documents to PDF.
+Access to wkhtmltopdf is performed via JNA, exposed through a Java-friendly layer.
+
+## Maven
+
+The project is hosted in Maven Central at the following coordinates:
+ 
 `com.benbarkay.htmltopdf:htmltopdf:0.1.0`
 
-## Examples
+## Usage
 
 ```java
 // Convert amazon.com's homepage, streaming PDF bytes via an InputStream
@@ -20,13 +26,6 @@ try (InputStream pdfIn = HtmlToPdf.create()
 boolean success = HtmlToPdf.create()
     .object(HtmlToPdfObject.forUrl("http://github.com"))
     .convert("/path/to/saved.pdf");
-
-// Attempt to access a bad URL and learn about the failure
-HtmlToPdf.create()
-    .object(HtmlToPdfObject.forUrl("http://someurlwith.badtld"))
-    .failure(() -> System.out.println("Failed to load PDF"))
-    .convert("/path/to/saved.pdf");
 ```
         
-You may discover more options by looking into `HtmlToPdf` and `HtmlToPdfObject` methods.
-This mapping of `wkhtmltopdf` provides almost all of the features available in the C library and executable.
+You may discover more options by looking into the methods of `HtmlToPdf` and `HtmlToPdfObject`.
