@@ -3,28 +3,39 @@ package io.woo.htmltopdf.wkhtmltopdf;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 class WkHtmlToPdfLoader {
+
+    private static final File tmpDir = new File(System.getProperty("java.io.tmpdir"), "io.woo.htmltopdf");
+
     static WkHtmlToPdf load() {
-        Path tmpFile;
-        try {
-            tmpFile = Files.createTempFile("htmlToPdfLoader", "nativeLibrary");
-            try {
-                try (InputStream in = WkHtmlToPdfLoader.class.getResourceAsStream(getLibraryResource())) {
-                    Files.copy(in, tmpFile, StandardCopyOption.REPLACE_EXISTING);
-                    return (WkHtmlToPdf)Native.loadLibrary(tmpFile.toAbsolutePath().toString(), WkHtmlToPdf.class);
-                }
-            } finally {
-                Files.deleteIfExists(tmpFile);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if ((!tmpDir.exists() && !tmpDir.mkdirs())) {
+            throw new IllegalStateException("htmltopdf temporary directory cannot be created");
         }
+        if (!tmpDir.canWrite()) {
+            throw new IllegalStateException("htmltopdf temporary directory is not writable");
+        }
+
+        File libraryFile = new File(tmpDir, getLibraryResource());
+        if (!libraryFile.exists()) {
+            try {
+                File dirPath = libraryFile.getParentFile();
+                if (!dirPath.exists() && !dirPath.mkdirs()) {
+                    throw new IllegalStateException("unable to create directories for native library");
+                }
+                try (InputStream in = WkHtmlToPdfLoader.class.getResourceAsStream(getLibraryResource())) {
+                    Files.copy(in, libraryFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return (WkHtmlToPdf)Native.loadLibrary(libraryFile.getAbsolutePath(), WkHtmlToPdf.class);
     }
 
     static String getLibraryResource() {
