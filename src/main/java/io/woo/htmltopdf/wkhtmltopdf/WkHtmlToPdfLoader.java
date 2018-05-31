@@ -1,4 +1,4 @@
-package com.benbarkay.htmltopdf.wkhtmltopdf;
+package io.woo.htmltopdf.wkhtmltopdf;
 
 import com.sun.jna.Native;
 import com.sun.jna.Platform;

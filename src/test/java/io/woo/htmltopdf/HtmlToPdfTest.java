@@ -1,4 +1,4 @@
-package com.benbarkay.htmltopdf;
+package io.woo.htmltopdf;
 
 import org.junit.Rule;
 import org.junit.Test;

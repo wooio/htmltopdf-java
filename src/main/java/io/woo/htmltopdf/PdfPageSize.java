@@ -1,4 +1,4 @@
-package com.benbarkay.htmltopdf;
+package io.woo.htmltopdf;
 
 public enum PdfPageSize implements WkValue {
 

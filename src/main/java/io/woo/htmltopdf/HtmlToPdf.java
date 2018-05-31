@@ -1,6 +1,6 @@
-package com.benbarkay.htmltopdf;
+package io.woo.htmltopdf;
 
-import com.benbarkay.htmltopdf.wkhtmltopdf.WkHtmlToPdf;
+import io.woo.htmltopdf.wkhtmltopdf.WkHtmlToPdf;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 

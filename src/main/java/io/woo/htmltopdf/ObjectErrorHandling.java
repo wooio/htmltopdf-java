@@ -1,4 +1,4 @@
-package com.benbarkay.htmltopdf;
+package io.woo.htmltopdf;
 
 public enum ObjectErrorHandling implements WkValue {
     /** Aborts the conversion process. */

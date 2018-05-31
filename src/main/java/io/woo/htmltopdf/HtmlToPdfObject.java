@@ -1,4 +1,4 @@
-package com.benbarkay.htmltopdf;
+package io.woo.htmltopdf;
 
 import java.util.HashMap;
 import java.util.Map;

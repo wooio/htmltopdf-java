@@ -1,4 +1,4 @@
-package com.benbarkay.htmltopdf;
+package io.woo.htmltopdf;
 
 public enum PdfOrientation implements WkValue {
     PORTRAIT("Portrait"),

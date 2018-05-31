@@ -1,4 +1,4 @@
-package com.benbarkay.htmltopdf;
+package io.woo.htmltopdf;
 
 public class HtmlToPdfException extends RuntimeException {
     public HtmlToPdfException() {

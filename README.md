@@ -1,5 +1,3 @@
-![Build status](https://travis-ci.org/benbarkay/htmltopdf-java.svg?branch=master)
-
 # Overview
 This project is based on [wkhtmltopdf](https://github.com/wkhtmltopdf/wkhtmltopdf), which converts HTML documents to PDF.
 Access to wkhtmltopdf is performed via JNA, exposed through a Java-friendly layer.
@@ -8,7 +6,7 @@ Access to wkhtmltopdf is performed via JNA, exposed through a Java-friendly laye
 
 The project is hosted in Maven Central at the following coordinates:
  
-`com.benbarkay.htmltopdf:htmltopdf:0.1.0`
+`io.woo:htmltopdf:0.1.0`
 
 ## Usage
 
