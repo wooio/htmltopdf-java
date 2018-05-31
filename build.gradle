@@ -7,12 +7,18 @@ apply plugin: 'signing'
 
 sourceCompatibility = 1.8
 
-def ossrhUsername = System.getenv("OSSRH_USERNAME") ?: project.getProperty("ossrhUsername")
-def ossrhPassword = System.getenv("OSSRH_PASSWORD") ?: project.getProperty("ossrhPassword")
+def envOrProperty = { envKey, propKey, defaultValue ->
+    System.getenv(envKey) ?:
+            project.hasProperty(propKey) ?
+                    project.getProperty(propKey) : defaultValue
+};
 
-ext."signing.keyId" = System.getenv("SIGNING_KEYID") ?: project.getProperty("signing.keyId")
-ext."signing.password" = System.getenv("SIGNING_PASSWORD") ?: project.getProperty("signing.password")
-ext."signing.secretKeyRingFile" = project.hasProperty("signing.secretKeyRingFile") ? project.getProperty("signing.secretKeyRingFile") : file("secring.gpg").absolutePath
+def ossrhUsername = envOrProperty('OSSRH_USERNAME', 'ossrhUsername', '');
+def ossrhPassword = envOrProperty('OSSRH_PASSWORD', 'ossrhPassword', '')
+
+ext."signing.keyId" = envOrProperty('SIGNING_KEYID', 'signing.keyId', '')
+ext."signing.password" = envOrProperty('SIGNING_PASSWORD', 'signing.password', '')
+ext."signing.secretKeyRingFile" = envOrProperty('SIGNING_SECRETKEYRINGFILE', 'signing.secretKeyRingFile', file("secring.gpg").absolutePath)
 
 repositories {
     mavenCentral()
