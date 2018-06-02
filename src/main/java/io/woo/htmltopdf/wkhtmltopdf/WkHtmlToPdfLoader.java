@@ -35,7 +35,8 @@ class WkHtmlToPdfLoader {
                 throw new RuntimeException(e);
             }
         }
-        return (WkHtmlToPdf)Native.loadLibrary(libraryFile.getAbsolutePath(), WkHtmlToPdf.class);
+        System.setProperty("jna.library.path", libraryFile.getParent());
+        return Native.loadLibrary("wkhtmltox", WkHtmlToPdf.class);
     }
 
     static String getLibraryResource() {
