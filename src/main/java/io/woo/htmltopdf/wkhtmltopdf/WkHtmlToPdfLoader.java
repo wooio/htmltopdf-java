@@ -38,11 +38,13 @@ class WkHtmlToPdfLoader {
         return (WkHtmlToPdf)Native.loadLibrary(libraryFile.getAbsolutePath(), WkHtmlToPdf.class);
     }
 
-    static String getLibraryResource() {
+    private static String getLibraryResource() {
         return "/wkhtmltox/0.12.4/"
                 + (Platform.isWindows() ? "" : "lib")
                 + "wkhtmltox"
                 + (Platform.is64Bit() ? "" : ".32")
-                + (Platform.isWindows() ? ".dll" : ".so");
+                + (Platform.isWindows() ? ".dll"
+                    : Platform.isMac() ? ".dylib"
+                        : ".so");
     }
 }
