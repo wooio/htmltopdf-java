@@ -35,7 +35,11 @@ class WkHtmlToPdfLoader {
                 throw new RuntimeException(e);
             }
         }
-        return (WkHtmlToPdf)Native.loadLibrary(libraryFile.getAbsolutePath(), WkHtmlToPdf.class);
+
+        WkHtmlToPdf instance = (WkHtmlToPdf)Native.loadLibrary(libraryFile.getAbsolutePath(), WkHtmlToPdf.class);
+        instance.wkhtmltopdf_init(0);
+
+        return instance;
     }
 
     private static String getLibraryResource() {

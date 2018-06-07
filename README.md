@@ -6,7 +6,7 @@ Access to wkhtmltopdf is performed via JNA, exposed through a Java-friendly laye
 
 The project is hosted in Maven Central at the following coordinates:
  
-`io.woo:htmltopdf:1.0.1`
+`io.woo:htmltopdf:1.0.2`
 
 ## Usage
 
