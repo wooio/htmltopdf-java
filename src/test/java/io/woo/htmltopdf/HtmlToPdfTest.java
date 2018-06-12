@@ -6,7 +6,15 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.IntStream;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -51,5 +59,44 @@ public class HtmlToPdfTest {
         HtmlToPdf.create()
                 .object(HtmlToPdfObject.forUrl("file:///path/that/does/not/exist"))
                 .convert();
+    }
+
+    @Test
+    public void itDoesNotHangWhenAccessedByMultipleThreads() throws InterruptedException {
+        int concurrency = 5;
+
+        AtomicReference<InterruptedException> interrupted = new AtomicReference<>();
+        ExecutorService service = Executors.newFixedThreadPool(concurrency);
+        CountDownLatch latch = new CountDownLatch(concurrency);
+
+        AtomicInteger converted = new AtomicInteger();
+
+        IntStream.range(0, concurrency)
+                .<Runnable>mapToObj((i) -> () -> {
+                    latch.countDown();
+                    try {
+                        latch.await();
+                    }
+                    catch (InterruptedException e) {
+                        interrupted.set(e);
+                    }
+                    try {
+                        HtmlToPdf.create()
+                                .object(HtmlToPdfObject.forHtml("<p>test</p>"))
+                                .convert();
+                        converted.getAndIncrement();
+                    } catch (HtmlToPdfException e) {
+                        e.printStackTrace();
+                    }
+                })
+                .forEach(service::submit);
+        service.shutdown();
+        service.awaitTermination(10, TimeUnit.MINUTES);
+
+        if (interrupted.get() != null) {
+            throw interrupted.get();
+        }
+
+        assertEquals(concurrency, converted.get());
     }
 }

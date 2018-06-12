@@ -1,10 +1,17 @@
 package io.woo.htmltopdf.wkhtmltopdf;
 
-import com.sun.jna.*;
+import com.sun.jna.Callback;
+import com.sun.jna.Library;
+import com.sun.jna.Memory;
+import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
+import java.util.function.Function;
+
 public interface WkHtmlToPdf extends Library {
-    WkHtmlToPdf INSTANCE = WkHtmlToPdfLoader.load();
+    static <T> T withInstance(Function<WkHtmlToPdf, T> fn){
+        return WkHtmlToPdfInstance.instance.withInstance(fn);
+    }
 
     interface wkhtmltopdf_str_callback extends Callback {
         void callback(Pointer converter, String str);

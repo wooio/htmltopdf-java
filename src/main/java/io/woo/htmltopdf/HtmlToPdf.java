@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -20,10 +21,9 @@ public class HtmlToPdf {
      * Creates a new {@code HtmlToPdf} instance.
      */
     public static HtmlToPdf create() {
-        return new HtmlToPdf(WkHtmlToPdf.INSTANCE);
+        return new HtmlToPdf();
     }
 
-    private final WkHtmlToPdf wkHtmlToPdf;
     private final Map<String,String> settings;
     private final List<HtmlToPdfObject> objects;
     private final List<Consumer<String>> warningCallbacks;
@@ -31,8 +31,7 @@ public class HtmlToPdf {
     private final List<Consumer<HtmlToPdfProgress>> progressChangedCallbacks;
     private final List<Consumer<Boolean>> finishedCallbacks;
 
-    private HtmlToPdf(WkHtmlToPdf wkHtmlToPdf) {
-        this.wkHtmlToPdf = wkHtmlToPdf;
+    private HtmlToPdf() {
         this.objects = new ArrayList<>();
         this.settings = new HashMap<>();
         warningCallbacks = new ArrayList<>();
@@ -229,8 +228,7 @@ public class HtmlToPdf {
         }
         Map<String,String> settings = new HashMap<>(this.settings);
         settings.put("out", path);
-        return withConverter(settings, wkHtmlToPdf::wkhtmltopdf_convert)
-                == 1;
+        return withConverter(settings, (c, wkHtmlToPdf) -> wkHtmlToPdf.wkhtmltopdf_convert(c) == 1);
     }
 
     /**
@@ -241,7 +239,7 @@ public class HtmlToPdf {
     public InputStream convert() {
         Map<String,String> settings = new HashMap<>(this.settings);
         settings.remove("out");
-        return withConverter(settings, (c) -> {
+        return withConverter(settings, (c, wkHtmlToPdf) -> {
             List<String> log = new ArrayList<>();
             warning(w -> log.add("Warning: " + w));
             error(e -> log.add("Error: " + e));
@@ -271,33 +269,35 @@ public class HtmlToPdf {
         return this;
     }
 
-    private <T> T withConverter(Map<String,String> settings, Function<Pointer, T> consumer) {
-        Pointer globalSettings = wkHtmlToPdf.wkhtmltopdf_create_global_settings();
-        settings.forEach((k, v) -> wkHtmlToPdf.wkhtmltopdf_set_global_setting(globalSettings, k, v));
-        Pointer converter = wkHtmlToPdf.wkhtmltopdf_create_converter(globalSettings);
-        wkHtmlToPdf.wkhtmltopdf_set_warning_callback(converter, (c, s) -> warningCallbacks.forEach(wc -> wc.accept(s)));
-        wkHtmlToPdf.wkhtmltopdf_set_error_callback(converter, (c,s) -> errorCallbacks.forEach(ec -> ec.accept(s)));
-        wkHtmlToPdf.wkhtmltopdf_set_progress_changed_callback(converter, (c, phaseProgress) -> {
-            int phase = wkHtmlToPdf.wkhtmltopdf_current_phase(c);
-            int totalPhases = wkHtmlToPdf.wkhtmltopdf_phase_count(c);
-            String phaseDesc = wkHtmlToPdf.wkhtmltopdf_phase_description(c, phase);
-            HtmlToPdfProgress progress = new HtmlToPdfProgress(
-                    phase,
-                    phaseDesc,
-                    totalPhases,
-                    phaseProgress);
-            progressChangedCallbacks.forEach(pc -> pc.accept(progress));
-        });
-        wkHtmlToPdf.wkhtmltopdf_set_finished_callback(converter, (c, i) -> finishedCallbacks.forEach(fc -> fc.accept(i==1)));
-        try {
-            objects.forEach((object) -> {
-                Pointer objectSettings = wkHtmlToPdf.wkhtmltopdf_create_object_settings();
-                object.getSettings().forEach((k, v) -> wkHtmlToPdf.wkhtmltopdf_set_object_setting(objectSettings, k, v));
-                wkHtmlToPdf.wkhtmltopdf_add_object(converter, objectSettings, object.getHtmlData());
+    private <T> T withConverter(Map<String,String> settings, BiFunction<Pointer, WkHtmlToPdf, T> consumer) {
+        return WkHtmlToPdf.withInstance(wkHtmlToPdf -> {
+            Pointer globalSettings = wkHtmlToPdf.wkhtmltopdf_create_global_settings();
+            settings.forEach((k, v) -> wkHtmlToPdf.wkhtmltopdf_set_global_setting(globalSettings, k, v));
+            Pointer converter = wkHtmlToPdf.wkhtmltopdf_create_converter(globalSettings);
+            wkHtmlToPdf.wkhtmltopdf_set_warning_callback(converter, (c, s) -> warningCallbacks.forEach(wc -> wc.accept(s)));
+            wkHtmlToPdf.wkhtmltopdf_set_error_callback(converter, (c,s) -> errorCallbacks.forEach(ec -> ec.accept(s)));
+            wkHtmlToPdf.wkhtmltopdf_set_progress_changed_callback(converter, (c, phaseProgress) -> {
+                int phase = wkHtmlToPdf.wkhtmltopdf_current_phase(c);
+                int totalPhases = wkHtmlToPdf.wkhtmltopdf_phase_count(c);
+                String phaseDesc = wkHtmlToPdf.wkhtmltopdf_phase_description(c, phase);
+                HtmlToPdfProgress progress = new HtmlToPdfProgress(
+                        phase,
+                        phaseDesc,
+                        totalPhases,
+                        phaseProgress);
+                progressChangedCallbacks.forEach(pc -> pc.accept(progress));
             });
-            return consumer.apply(converter);
-        } finally {
-            wkHtmlToPdf.wkhtmltopdf_destroy_converter(converter);
-        }
+            wkHtmlToPdf.wkhtmltopdf_set_finished_callback(converter, (c, i) -> finishedCallbacks.forEach(fc -> fc.accept(i==1)));
+            try {
+                objects.forEach((object) -> {
+                    Pointer objectSettings = wkHtmlToPdf.wkhtmltopdf_create_object_settings();
+                    object.getSettings().forEach((k, v) -> wkHtmlToPdf.wkhtmltopdf_set_object_setting(objectSettings, k, v));
+                    wkHtmlToPdf.wkhtmltopdf_add_object(converter, objectSettings, object.getHtmlData());
+                });
+                return consumer.apply(converter, wkHtmlToPdf);
+            } finally {
+                wkHtmlToPdf.wkhtmltopdf_destroy_converter(converter);
+            }
+        });
     }
 }
