@@ -1,9 +1,5 @@
 package io.woo.htmltopdf;
 
-import io.woo.htmltopdf.wkhtmltopdf.WkHtmlToPdf;
-import com.sun.jna.Pointer;
-import com.sun.jna.ptr.PointerByReference;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -12,8 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import com.sun.jna.Pointer;
+import com.sun.jna.ptr.PointerByReference;
+import io.woo.htmltopdf.wkhtmltopdf.WkHtmlToPdf;
 
 public class HtmlToPdf {
 
@@ -38,6 +37,20 @@ public class HtmlToPdf {
         errorCallbacks = new ArrayList<>();
         progressChangedCallbacks = new ArrayList<>();
         finishedCallbacks = new ArrayList<>();
+    }
+
+    /**
+     * Disable the intelligent shrinking strategy used by WebKit that makes the pixel/dpi ratio none constant
+     */
+    public HtmlToPdf disableSmartShrinking(boolean disableSmartShrinking) {
+        return setting("disable-smart-shrinking", disableSmartShrinking);
+    }
+
+    /**
+     * Zoom factor. Default is 1. This argument is passed to wkhtmltopdf as <code>--zoom</code> argument
+     */
+    public HtmlToPdf zoom(float zoomSize) {
+        return setting("zoom", zoomSize);
     }
 
     /**
@@ -223,7 +236,7 @@ public class HtmlToPdf {
      *         or {@code false} otherwise.
      */
     public boolean convert(String path) {
-        if (objects.size() < 1) {
+        if (objects.isEmpty()) {
             return false;
         }
         Map<String,String> settings = new HashMap<>(this.settings);
