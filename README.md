@@ -69,6 +69,13 @@ try (InputStream in = htmlToPdf.convert()) {
 }
 ```
 
+## Concurrency limitations
+
+While the library is thread-safe, it unfortunately cannot perform conversions concurrently.
+Because wkhtmltopdf uses Qt behind the scenes to render webpages,
+there is a single thread which performs such rendering across a single process. Therefore, at this point, it is only 
+possible to perform one conversion at the same time per process.
+
 ## Troubleshooting
 
 #### Missing native dependencies
