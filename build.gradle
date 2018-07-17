@@ -1,5 +1,5 @@
 group 'io.woo'
-version '1.0.4'
+version '1.0.5'
 
 apply plugin: 'java'
 apply plugin: 'maven'
@@ -11,7 +11,7 @@ def envOrProperty = { envKey, propKey, defaultValue ->
     System.getenv(envKey) ?:
             project.hasProperty(propKey) ?
                     project.getProperty(propKey) : defaultValue
-};
+}
 
 def ossrhUsername = envOrProperty('OSSRH_USERNAME', 'ossrhUsername', '');
 def ossrhPassword = envOrProperty('OSSRH_PASSWORD', 'ossrhPassword', '')
