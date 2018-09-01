@@ -14,9 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class HtmlToPdfTest {
 
@@ -98,5 +96,14 @@ public class HtmlToPdfTest {
         }
 
         assertEquals(concurrency, converted.get());
+    }
+
+    @Test
+    public void itReleasesHandleToPdfFileWhenConversionIsDone() throws IOException {
+        File file = tempFolder.newFile();
+        HtmlToPdf.create()
+                .object(HtmlToPdfObject.forHtml("<p>test</p>"))
+                .convert(file.getPath());
+        assertTrue(file.renameTo(file));
     }
 }
