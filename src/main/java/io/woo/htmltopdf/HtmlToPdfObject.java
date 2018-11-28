@@ -306,6 +306,11 @@ public class HtmlToPdfObject {
         return this;
     }
 
+    public HtmlToPdfObject setting(Map<String,String> settings) {
+        this.settings = settings;
+        return this;
+    }
+
     Map<String, String> getSettings() {
         return settings;
     }

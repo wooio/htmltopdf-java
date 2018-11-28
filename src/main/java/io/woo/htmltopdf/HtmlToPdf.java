@@ -282,6 +282,11 @@ public class HtmlToPdf {
         return this;
     }
 
+    public HtmlToPdf setting(Map<String,String> settings) {
+        this.settings = settings;
+        return this;
+    }
+
     private <T> T withConverter(Map<String,String> settings, BiFunction<Pointer, WkHtmlToPdf, T> consumer) {
         return WkHtmlToPdf.withInstance(wkHtmlToPdf -> {
             Pointer globalSettings = wkHtmlToPdf.wkhtmltopdf_create_global_settings();
