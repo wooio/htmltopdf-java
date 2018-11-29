@@ -12,10 +12,20 @@ public class HtmlToPdfObject {
      * @return  The created {@code HtmlToPdfObject} instance.
      */
     public static HtmlToPdfObject forHtml(String html) {
+        return forHtml(html, null);
+    }
+
+    /**
+     * Creates a new {@code HtmlToPdfObject} using the specified HTML as content.
+     * @param html  The HTML code to convert to PDF.
+     * @param settings  The settings to use at the new instance.
+     * @return  The created {@code HtmlToPdfObject} instance.
+     */
+    public static HtmlToPdfObject forHtml(String html, Map<String, String> settings) {
         if (html == null || html.isEmpty() || html.startsWith("\0")) {
             throw new IllegalArgumentException("No content specified for object.");
         }
-        return new HtmlToPdfObject(html);
+        return new HtmlToPdfObject(html, settings);
     }
 
     /**
@@ -25,7 +35,18 @@ public class HtmlToPdfObject {
      * @return  The created {@code HtmlToPdfObject} instance.
      */
     public static HtmlToPdfObject forUrl(String url) {
-        HtmlToPdfObject object = new HtmlToPdfObject(null);
+        return forUrl(url, null);
+    }
+
+    /**
+     * Creates a new {@code HtmlToPdfObject} for the specified URL. The content will be
+     * obtained from the specified URL during the conversion process.
+     * @param url   The URL to obtain HTML content from.
+     * @param settings   The settings to use at the new instance.
+     * @return  The created {@code HtmlToPdfObject} instance.
+     */
+    public static HtmlToPdfObject forUrl(String url, Map<String, String> settings) {
+        HtmlToPdfObject object = new HtmlToPdfObject(null, settings);
         object.settings.put("page", url);
         return object;
     }
@@ -33,8 +54,8 @@ public class HtmlToPdfObject {
     private final Map<String, String> settings;
     private final String htmlData;
 
-    private HtmlToPdfObject(String htmlData) {
-        this.settings = new HashMap<>();
+    private HtmlToPdfObject(String htmlData, Map<String, String> settings) {
+        this.settings = (settings != null ? new HashMap<>(settings) : new HashMap<>());
         this.htmlData = htmlData;
     }
 

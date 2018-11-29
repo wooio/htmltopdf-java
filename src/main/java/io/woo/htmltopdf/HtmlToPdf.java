@@ -20,7 +20,16 @@ public class HtmlToPdf {
      * Creates a new {@code HtmlToPdf} instance.
      */
     public static HtmlToPdf create() {
-        return new HtmlToPdf();
+        return create(null);
+    }
+
+    /**
+     * Creates a new {@code HtmlToPdf} instance.
+     * @param settings The settings to use at the new instance.
+     * @return  The created {@code HtmlToPdf} instance.
+     */
+    public static HtmlToPdf create(Map<String, String> settings) {
+        return new HtmlToPdf(settings);
     }
 
     private final Map<String,String> settings;
@@ -30,9 +39,9 @@ public class HtmlToPdf {
     private final List<Consumer<HtmlToPdfProgress>> progressChangedCallbacks;
     private final List<Consumer<Boolean>> finishedCallbacks;
 
-    private HtmlToPdf() {
+    private HtmlToPdf(Map<String, String> settings) {
         this.objects = new ArrayList<>();
-        this.settings = new HashMap<>();
+        this.settings = (settings != null ? new HashMap<>(settings) : new HashMap<>());
         warningCallbacks = new ArrayList<>();
         errorCallbacks = new ArrayList<>();
         progressChangedCallbacks = new ArrayList<>();
