@@ -12,7 +12,7 @@ public class HtmlToPdfObject {
      * @return  The created {@code HtmlToPdfObject} instance.
      */
     public static HtmlToPdfObject forHtml(String html) {
-        return forHtml(html, null);
+        return forHtml(html, new HashMap<>());
     }
 
     /**
@@ -35,27 +35,19 @@ public class HtmlToPdfObject {
      * @return  The created {@code HtmlToPdfObject} instance.
      */
     public static HtmlToPdfObject forUrl(String url) {
-        return forUrl(url, null);
+        return forUrl(url, new HashMap<>());
     }
 
-    /**
-     * Creates a new {@code HtmlToPdfObject} for the specified URL. The content will be
-     * obtained from the specified URL during the conversion process.
-     * @param url   The URL to obtain HTML content from.
-     * @param settings   The settings to use at the new instance.
-     * @return  The created {@code HtmlToPdfObject} instance.
-     */
     public static HtmlToPdfObject forUrl(String url, Map<String, String> settings) {
-        HtmlToPdfObject object = new HtmlToPdfObject(null, settings);
-        object.settings.put("page", url);
-        return object;
+        settings.put("url", url);
+        return new HtmlToPdfObject(null, settings);
     }
 
     private final Map<String, String> settings;
     private final String htmlData;
 
     private HtmlToPdfObject(String htmlData, Map<String, String> settings) {
-        this.settings = (settings != null ? new HashMap<>(settings) : new HashMap<>());
+        this.settings = settings;
         this.htmlData = htmlData;
     }
 
