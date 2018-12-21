@@ -20,7 +20,7 @@ public class HtmlToPdf {
      * Creates a new {@code HtmlToPdf} instance.
      */
     public static HtmlToPdf create() {
-        return create(null);
+        return create(new HashMap<>());
     }
 
     /**
@@ -41,7 +41,7 @@ public class HtmlToPdf {
 
     private HtmlToPdf(Map<String, String> settings) {
         this.objects = new ArrayList<>();
-        this.settings = (settings != null ? new HashMap<>(settings) : new HashMap<>());
+        this.settings = settings;
         warningCallbacks = new ArrayList<>();
         errorCallbacks = new ArrayList<>();
         progressChangedCallbacks = new ArrayList<>();
