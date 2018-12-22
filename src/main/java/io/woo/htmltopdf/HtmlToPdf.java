@@ -56,13 +56,6 @@ public class HtmlToPdf {
     }
 
     /**
-     * Zoom factor. Default is 1. This argument is passed to wkhtmltopdf as <code>--zoom</code> argument
-     */
-    public HtmlToPdf zoom(float zoomSize) {
-        return setting("zoom", zoomSize);
-    }
-
-    /**
      * The paper size of the output document.
      */
     public HtmlToPdf pageSize(PdfPageSize pageSize) {
