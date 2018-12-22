@@ -38,6 +38,14 @@ public class HtmlToPdfObject {
         return forUrl(url, new HashMap<>());
     }
 
+    /**
+     * Creates a new {@code HtmlToPdfObject} for the specified URL, using the specified
+     * settings. The content will be obtained from the specified URL during the conversion
+     * process.
+     * @param url The URL to obtain the content from.
+     * @param settings The settings to use.
+     * @return The created {@code HtmlToPdfObject} instance.
+     */
     public static HtmlToPdfObject forUrl(String url, Map<String, String> settings) {
         settings.put("url", url);
         return new HtmlToPdfObject(null, settings);
