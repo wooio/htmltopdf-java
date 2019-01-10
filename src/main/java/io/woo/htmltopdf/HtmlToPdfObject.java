@@ -47,7 +47,7 @@ public class HtmlToPdfObject {
      * @return The created {@code HtmlToPdfObject} instance.
      */
     public static HtmlToPdfObject forUrl(String url, Map<String, String> settings) {
-        settings.put("url", url);
+        settings.put("page", url);
         return new HtmlToPdfObject(null, settings);
     }
 
