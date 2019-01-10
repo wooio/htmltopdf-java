@@ -1,11 +1,15 @@
 package io.woo.htmltopdf;
 
+import com.sun.net.httpserver.HttpServer;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -105,5 +109,28 @@ public class HtmlToPdfTest {
                 .object(HtmlToPdfObject.forHtml("<p>test</p>"))
                 .convert(file.getPath());
         assertTrue(file.renameTo(file));
+    }
+
+    @Test
+    public void itConvertsMarkupFromUrlToPdf() throws IOException {
+        String html = "<html><head><title>Test page</title></head><body><p>This is just a simple test.</p></html>";
+
+        HttpServer httpServer = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        httpServer.createContext("/test", httpExchange -> {
+            httpExchange.sendResponseHeaders(200, html.length());
+            try (OutputStream os = httpExchange.getResponseBody()) {
+                os.write(html.getBytes(StandardCharsets.UTF_8));
+            }
+        });
+        httpServer.start();
+
+        String url = String.format("http://127.0.0.1:%d/test",
+                httpServer.getAddress().getPort());
+
+        boolean success = HtmlToPdf.create()
+                .object(HtmlToPdfObject.forUrl(url))
+                .convert("/dev/null");
+
+        assertTrue(success);
     }
 }
