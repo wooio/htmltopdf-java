@@ -6,7 +6,7 @@ Access to wkhtmltopdf is performed via JNA, exposed through a Java-friendly laye
 
 Gradle:
 ```groovy
-compile 'io.woo:htmltopdf:1.0.6'
+compile 'io.woo:htmltopdf:1.0.7'
 ```
 
 Maven:
@@ -14,7 +14,7 @@ Maven:
 <dependency>
   <groupId>io.woo</groupId>
   <artifactId>htmltopdf</artifactId>
-  <version>1.0.6</version>
+  <version>1.0.7</version>
   <scope>compile</scope>
 </dependency>
 ```
