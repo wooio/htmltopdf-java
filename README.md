@@ -81,7 +81,7 @@ possible to perform one conversion at the same time per process.
 #### Missing native dependencies
 If you get the following exception:
 ```
-java.lang.UnsatisfiedLinkError: Unable to load library '/tmp/io.woo.htmltopdf/wkhtmltox/0.12.4/libwkhtmltox.so': Native library (tmp/io.woo.htmltopdf/wkhtmltox/0.12.4/libwkhtmltox.so) not found in resource path
+java.lang.UnsatisfiedLinkError: Unable to load library '/tmp/io.woo.htmltopdf/wkhtmltox/0.12.5/libwkhtmltox.so': Native library (tmp/io.woo.htmltopdf/wkhtmltox/0.12.5/libwkhtmltox.so) not found in resource path
 ```
 Then that likely means that one of the native dependencies of wkhtmltopdf is not met.
 It might be worth checking that the following packages are installed:
